@@ -25,7 +25,7 @@ Pre-compiling binaries
     make install
     cd ..
     
-    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient15-dev libpq-dev libpcre3-dev
+    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient15-dev libpq-dev libpcre3-dev php5-dev php-pear
     apt-get install curl libcurl3 libcurl3-dev php5-curl
     # php
     wget http://us2.php.net/get/php-5.3.6.tar.gz/from/us.php.net/mirror 
