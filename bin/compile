@@ -5,7 +5,7 @@
 set -e
 
 # config
-APACHE_VERSION="2.2.19"
+APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
 PHP_VERSION="5.3.6"
 PHP_PATH="php"

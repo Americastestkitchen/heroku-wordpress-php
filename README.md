@@ -25,6 +25,8 @@ Pre-compiling binaries
     make install
     cd ..
     
+    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient15-dev libpq-dev libpcre3-dev
+    apt-get install curl libcurl3 libcurl3-dev php5-curl
     # php
     wget http://us2.php.net/get/php-5.3.6.tar.gz/from/us.php.net/mirror 
     mv mirror php.tar.gz
@@ -44,8 +46,10 @@ Pre-compiling binaries
     pear config-set php_dir /app/php
     pecl install apc
     mkdir /app/php/include/php/ext/apc
-    cp /usr/lib/php5/20060613/apc.so /app/php/ext/
+    cp /usr/lib/php5/20060626/apc.so /app/php/ext/
     cp /usr/include/php5/ext/apc/apc_serializer.h /app/php/include/php/ext/apc/
+    pecl install memcache
+    cp /usr/lib/php5/20090626/memcache.so /app/php/ext/
     
     
     # package
