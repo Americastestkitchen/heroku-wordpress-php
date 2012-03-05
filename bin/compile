@@ -65,7 +65,7 @@ cat >>boot.sh <<EOF
 sed -i 's/Listen 80/Listen '\$PORT'/' /app/apache/conf/httpd.conf
 
 if [ -n "\${WWWROOT:+x}" ]; then
-  sed -ie "s%/app/www%/app/www\$WWWROOT%" /tmp/httpd.conf
+  sed -ie "s%/app/www%/app/www\$WWWROOT%" /app/apache/conf/httpd.conf
 fi
 
 for var in \`env|cut -f1 -d=\`; do
