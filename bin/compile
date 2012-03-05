@@ -85,7 +85,7 @@ chmod +x boot.sh
 
 # repack cache
 mkdir -p $CACHE_DIR
-for DIR in $APACHE_PATH $PHP_PATH ; do
+for DIR in $APACHE_PATH $PHP_PATH "local"; do
   rm -rf $CACHE_DIR/$DIR
   cp -R $DIR $CACHE_DIR/$DIR
 done
