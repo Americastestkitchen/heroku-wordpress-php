@@ -63,7 +63,7 @@ ln -s /app/php/bin/php bin/php
 
 cat >>boot.sh <<EOF
 
-echo "Using buildpack version \$BUILDPACK_VERSION"
+echo "Using buildpack version $BUILDPACK_VERSION"
 sed -i 's/Listen 80/Listen '\$PORT'/' /app/apache/conf/httpd.conf
 
 if [ -n "\${WWWROOT:+x}" ]; then
