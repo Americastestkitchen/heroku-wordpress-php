@@ -21,8 +21,8 @@ Pre-compiling binaries
 
     # apache
     mkdir /app
-    curl -O http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz
-    tar -C /tmp -xzvf src/httpd-2.2.22.tar.gz
+    curl -L http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz -o /tmp/httpd-2.2.22.tar.gz
+    tar -C /tmp -xzvf /tmp/httpd-2.2.22.tar.gz
     cd /tmp/httpd-2.2.22
     ./configure --prefix=/app/apache --enable-rewrite --enable-so --enable-deflate --enable-expires --enable-headers
     make
@@ -30,9 +30,9 @@ Pre-compiling binaries
     cd ..
     
     # php
-    curl -L http://us.php.net/get/php-5.3.10.tar.gz/from/us2.php.net/mirror -o php.tar.gz
-    tar xzvf php.tar.gz
-    cd php-5.3.10/
+    curl -L http://us.php.net/get/php-5.3.10.tar.gz/from/us2.php.net/mirror -o /tmp/php.tar.gz
+    tar -C /tmp -xzvf /tmp/php.tar.gz
+    cd /tmp/php-5.3.10/
     ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-pdo-mysql --with-pgsql --with-pdo-pgsql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-openssl --enable-mbstring --with-mhash --enable-pcntl --enable-mysqlnd --with-pear --with-mysqli
     make
     make install
@@ -40,7 +40,7 @@ Pre-compiling binaries
 
     # extensions and libraries
     mkdir /app/local
-    curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp
+    curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp/libmemcached-1.0.4.tar.gz
     cd /tmp
     tar -xzvf libmemcached-1.0.4.tar.gz
     cd libmemcached-1.0.4
@@ -50,6 +50,7 @@ Pre-compiling binaries
     cd /tmp
     curl -L -O http://pecl.php.net/get/memcached-2.0.1.tgz
     tar -xzvf memcached-2.0.1.tgz
+    cd memcached-2.0.1
     /app/php/bin/phpize
     ./configure --with-libmemcached-dir=/app/local/ --prefix=/app/php --with-php-config=/app/php/bin/php-config
     make
