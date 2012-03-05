@@ -31,7 +31,7 @@ if [ -f www/Procfile ]; then
 fi
 
 # unpack cache
-for DIR in $APACHE_PATH $PHP_PATH ; do
+for DIR in $APACHE_PATH $PHP_PATH "local"; do
   rm -rf $DIR
   if [ -d $CACHE_DIR/$DIR ]; then
     cp -r $CACHE_DIR/$DIR $DIR
