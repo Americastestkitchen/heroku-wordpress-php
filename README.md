@@ -15,49 +15,62 @@ The config files are bundled with the LP itself:
 Pre-compiling binaries
 ----------------------
 
+    apt-get update
+    apt-get install g++ gcc
+    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl
+
     # apache
     mkdir /app
-    wget http://apache.cyberuse.com//httpd/httpd-2.2.19.tar.gz
-    tar xvzf httpd-2.2.19.tar.gz
-    cd httpd-2.2.19
-    ./configure --prefix=/app/apache --enable-rewrite
+    curl -O http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz
+    tar -C /tmp -xzvf src/httpd-2.2.22.tar.gz
+    cd /tmp/httpd-2.2.22
+    ./configure --prefix=/app/apache --enable-rewrite --enable-so --enable-deflate --enable-expires --enable-headers
     make
     make install
     cd ..
     
-    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient15-dev libpq-dev libpcre3-dev php5-dev php-pear
-    apt-get install curl libcurl3 libcurl3-dev php5-curl
     # php
-    wget http://us2.php.net/get/php-5.3.6.tar.gz/from/us.php.net/mirror 
-    mv mirror php.tar.gz
+    curl -L http://us.php.net/get/php-5.3.10.tar.gz/from/us2.php.net/mirror -o php.tar.gz
     tar xzvf php.tar.gz
-    cd php-5.3.6/
-    ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-pdo-mysql --with-pgsql --with-pdo-pgsql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-openssl
+    cd php-5.3.10/
+    ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-pdo-mysql --with-pgsql --with-pdo-pgsql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-openssl --enable-mbstring --with-mhash --enable-pcntl --enable-mysqlnd --with-pear --with-mysqli
     make
     make install
     cd ..
+
+    # extensions and libraries
+    mkdir /app/local
+    curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp
+    cd /tmp
+    tar -xzvf libmemcached-1.0.4.tar.gz
+    cd libmemcached-1.0.4
+    ./configure --prefix=/app/local
+    make
+    make install
+    cd /tmp
+    curl -L -O http://pecl.php.net/get/memcached-2.0.1.tgz
+    tar -xzvf memcached-2.0.1.tgz
+    /app/php/bin/phpize
+    ./configure --with-libmemcached-dir=/app/local/ --prefix=/app/php --with-php-config=/app/php/bin/php-config
+    make
+    make install
     
+    /app/php/bin/pear config-set php_dir /app/php
+    /app/php/bin/pecl install apc
+    /app/php/bin/pecl install memcache
+
+    mkdir /app/local/lib
+    cp /usr/lib/libmysqlclient* /app/local/lib/
+
     # php extensions
     mkdir /app/php/ext
-    cp /usr/lib/libmysqlclient.so.15 /app/php/ext/
-    
-    # pear
-    apt-get install php5-dev php-pear
-    pear config-set php_dir /app/php
-    pecl install apc
-    mkdir /app/php/include/php/ext/apc
-    cp /usr/lib/php5/20060626/apc.so /app/php/ext/
-    cp /usr/include/php5/ext/apc/apc_serializer.h /app/php/include/php/ext/apc/
-    pecl install memcache
-    cp /usr/lib/php5/20090626/memcache.so /app/php/ext/
-    
     
     # package
     cd /app
-    echo '2.2.19' > apache/VERSION
-    tar -zcvf apache.tar.gz apache
-    echo '5.3.6' > php/VERSION
-    tar -zcvf php.tar.gz php
+    echo '2.2.22' > apache/VERSION
+    tar -zcvf apache-2.2.22.tar.gz apache
+    echo '5.3.10' > php/VERSION
+    tar -zcvf php-5.3.10.tar.gz php local
 
 
 Hacking
