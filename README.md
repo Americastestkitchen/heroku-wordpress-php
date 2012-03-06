@@ -15,9 +15,9 @@ The config files are bundled with the LP itself:
 Pre-compiling binaries
 ----------------------
 
-    apt-get update
-    apt-get install g++ gcc
-    apt-get install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl
+    apt-get -y update
+    apt-get -y install g++ gcc
+    apt-get -y install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl
 
     # apache
     mkdir /app
