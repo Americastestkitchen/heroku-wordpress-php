@@ -15,9 +15,14 @@ The config files are bundled with the LP itself:
 Pre-compiling binaries
 ----------------------
 
+    # use AMI ami-04c9306d
     apt-get -y update
     apt-get -y install g++ gcc
     apt-get -y install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
+
+    echo "deb http://packages.couchbase.com/ubuntu lucid lucid/main" > /etc/apt/sources.list.d/couchbase.list
+    wget -O- http://packages.couchbase.com/ubuntu/couchbase.key | apt-key add -
+    apt-get -y update && apt-get -y install libcouchbase-dev
 
     # apache
     mkdir /app
@@ -38,12 +43,15 @@ Pre-compiling binaries
     make install
     cd ..
 
-    mkdir /app/local/lib
+    mkdir -p /app/local/lib
     cp /usr/lib/libmysqlclient* /app/local/lib/
-    cp /usr/lib/libsasl2.* /app/local/lib/
+    cp /usr/lib/libsasl2* /app/local/lib/
+    cp /usr/lib/libvbucket* /app/local/lib/
+    cp /usr/lib/libevent* /app/local/lib/
+    cp /usr/lib/libcouchbase* /app/local/lib/
+    # echo "/usr/lib" >> /etc/ld.so.conf.d/libc.conf
     
     # extensions and libraries
-    mkdir /app/local
     curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp/libmemcached-1.0.4.tar.gz
     cd /tmp
     tar -xzvf libmemcached-1.0.4.tar.gz
@@ -55,6 +63,7 @@ Pre-compiling binaries
     curl -L -O http://pecl.php.net/get/memcached-2.0.1.tgz
     tar -xzvf memcached-2.0.1.tgz
     cd memcached-2.0.1
+    # edit config.m4 line 21 so no => yes
     /app/php/bin/phpize
     ./configure --with-libmemcached-dir=/app/local/ --prefix=/app/php --with-php-config=/app/php/bin/php-config
     make
@@ -74,14 +83,6 @@ Pre-compiling binaries
 
     # php extensions
     mkdir /app/php/ext
-
-    echo "deb http://packages.couchbase.com/ubuntu lucid lucid/main" > /etc/apt/sources.list.d/couchbase.list
-    wget -O- http://packages.couchbase.com/ubuntu/couchbase.key | apt-key add -
-    apt-get update && apt-get install libcouchbase-dev
-
-    cp /usr/lib/libvbucket.so.1* /app/local/lib/
-    cp /usr/lib/libcouchbase* /app/local/lib/
-    cp /usr/lib/libevent-1.4.so.2* /app/local/lib/
     
     # package
     cd /app
