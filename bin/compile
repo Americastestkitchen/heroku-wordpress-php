@@ -9,7 +9,7 @@ APACHE_VERSION="2.2.22"
 APACHE_PATH="apache"
 PHP_VERSION="5.3.10"
 PHP_PATH="php"
-BUILDPACK_VERSION="v1.0-rc1"
+BUILDPACK_VERSION="v1.0.1"
 
 BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
@@ -41,14 +41,14 @@ done
 
 # install apache if needed
 if [ ! -d $APACHE_PATH ]; then
-  APACHE_URL="https://s3.amazonaws.com/heroku-buildpack-binaries/apache-$APACHE_VERSION.tar.gz"
+  APACHE_URL="https://s3.amazonaws.com/heroku-buildpack-binaries/$BUILDPACK_VERSION/apache-$APACHE_VERSION.tar.gz"
   echo "-----> Bundling Apache v$APACHE_VERSION"
   curl --silent --max-time 60 --location $APACHE_URL | tar xz
 fi
 
 # install php if needed
 if [ ! -d $PHP_PATH ]; then
-  PHP_URL="https://s3.amazonaws.com/heroku-buildpack-binaries/php-$PHP_VERSION.tar.gz"
+  PHP_URL="https://s3.amazonaws.com/heroku-buildpack-binaries/$BUILDPACK_VERSION/php-$PHP_VERSION.tar.gz"
   echo "-----> Bundling PHP v$PHP_VERSION"
   curl --silent --max-time 60 --location $PHP_URL | tar xz
 fi
@@ -66,6 +66,7 @@ cat >>boot.sh <<EOF
 echo "Using buildpack version $BUILDPACK_VERSION"
 sed -i 's/Listen 80/Listen '\$PORT'/' /app/apache/conf/httpd.conf
 
+echo "Checking for WWWROOT environment variable..."
 if [ -n "\${WWWROOT:+x}" ]; then
   sed -ie "s%/app/www%/app/www\$WWWROOT%" /app/apache/conf/httpd.conf
 fi

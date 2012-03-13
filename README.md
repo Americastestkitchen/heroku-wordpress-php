@@ -17,7 +17,7 @@ Pre-compiling binaries
 
     apt-get -y update
     apt-get -y install g++ gcc
-    apt-get -y install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl
+    apt-get -y install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
 
     # apache
     mkdir /app
@@ -38,6 +38,10 @@ Pre-compiling binaries
     make install
     cd ..
 
+    mkdir /app/local/lib
+    cp /usr/lib/libmysqlclient* /app/local/lib/
+    cp /usr/lib/libsasl2.* /app/local/lib/
+    
     # extensions and libraries
     mkdir /app/local
     curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp/libmemcached-1.0.4.tar.gz
@@ -55,13 +59,18 @@ Pre-compiling binaries
     ./configure --with-libmemcached-dir=/app/local/ --prefix=/app/php --with-php-config=/app/php/bin/php-config
     make
     make install
+
+    cd /tmp
+    curl -L -O http://packages.couchbase.com/clients/php/php-ext-couchbase-1.0.1-ubuntu-x86_64.tar.gz
+    tar -xzvf php-ext-couchbase-1.0.1-ubuntu-x86_64.tar.gz
+    cd /tmp/php-ext-couchbase
+    cp couchbase.so /app/php/lib/php/extensions/no-debug-non-zts-20090626/
+
     
     /app/php/bin/pear config-set php_dir /app/php
     /app/php/bin/pecl install apc
     /app/php/bin/pecl install memcache
 
-    mkdir /app/local/lib
-    cp /usr/lib/libmysqlclient* /app/local/lib/
 
     # php extensions
     mkdir /app/php/ext
