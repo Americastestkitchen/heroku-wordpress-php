@@ -74,6 +74,14 @@ Pre-compiling binaries
 
     # php extensions
     mkdir /app/php/ext
+
+    echo "deb http://packages.couchbase.com/ubuntu lucid lucid/main" > /etc/apt/sources.list.d/couchbase.list
+    wget -O- http://packages.couchbase.com/ubuntu/couchbase.key | apt-key add -
+    apt-get update && apt-get install libcouchbase-dev
+
+    cp /usr/lib/libvbucket.so.1* /app/local/lib/
+    cp /usr/lib/libcouchbase* /app/local/lib/
+    cp /usr/lib/libevent-1.4.so.2* /app/local/lib/
     
     # package
     cd /app
