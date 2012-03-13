@@ -31,11 +31,18 @@ if [ -f www/Procfile ]; then
   mv www/Procfile .
 fi
 
+CACHE_VERSION=''
+if [ -f $CACHE_DIR/VERSION ]; then
+  CACHE_VERSION=`cat $CACHE_DIR/VERSION`
+fi
+
 # unpack cache
 for DIR in $APACHE_PATH $PHP_PATH "local"; do
   rm -rf $DIR
-  if [ -d $CACHE_DIR/$DIR ]; then
-    cp -r $CACHE_DIR/$DIR $DIR
+  if [ $CACHE_VERSION -eq $BUILDPACK_VERSION ]; then
+    if [ -d $CACHE_DIR/$DIR ]; then
+      cp -r $CACHE_DIR/$DIR $DIR
+    fi
   fi
 done
 
@@ -92,3 +99,4 @@ for DIR in $APACHE_PATH $PHP_PATH "local"; do
   rm -rf $CACHE_DIR/$DIR
   cp -R $DIR $CACHE_DIR/$DIR
 done
+echo $BUILDPACK_VERSION > $CACHE_DIR/VERSION
