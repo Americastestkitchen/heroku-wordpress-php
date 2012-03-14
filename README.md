@@ -16,74 +16,61 @@ Pre-compiling binaries
 ----------------------
 
     # use AMI ami-04c9306d
-    apt-get -y update
-    apt-get -y install g++ gcc
-    apt-get -y install libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
-
-    echo "deb http://packages.couchbase.com/ubuntu lucid lucid/main" > /etc/apt/sources.list.d/couchbase.list
-    wget -O- http://packages.couchbase.com/ubuntu/couchbase.key | apt-key add -
-    apt-get -y update && apt-get -y install libcouchbase-dev
-
-    # apache
-    mkdir /app
-    curl -L http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz -o /tmp/httpd-2.2.22.tar.gz
-    tar -C /tmp -xzvf /tmp/httpd-2.2.22.tar.gz
-    cd /tmp/httpd-2.2.22
-    ./configure --prefix=/app/apache --enable-rewrite --enable-so --enable-deflate --enable-expires --enable-headers
-    make
-    make install
-    cd ..
+    apt-get -y update && apt-get -y install g++ gcc libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
     
-    # php
-    curl -L http://us.php.net/get/php-5.3.10.tar.gz/from/us2.php.net/mirror -o /tmp/php.tar.gz
-    tar -C /tmp -xzvf /tmp/php.tar.gz
-    cd /tmp/php-5.3.10/
-    ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-pdo-mysql --with-pgsql --with-pdo-pgsql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-openssl --enable-mbstring --with-mhash --enable-pcntl --enable-mysqlnd --with-pear --with-mysqli
-    make
-    make install
-    cd ..
-
-    mkdir -p /app/local/lib
+    #download all the srcs
+    curl -L http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz -o /tmp/httpd-2.2.22.tar.gz
+    curl -L http://us.php.net/get/php-5.3.10.tar.gz/from/us2.php.net/mirror -o /tmp/php-5.3.10.tar.gz
+    curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp/libmemcached-1.0.4.tar.gz
+    curl -L http://pecl.php.net/get/memcached-2.0.1.tgz -o /tmp/memcached-2.0.1.tgz
+    
+    #untar all the srcs
+    tar -C /tmp -xzvf /tmp/httpd-2.2.22.tar.gz
+    tar -C /tmp -xzvf /tmp/php-5.3.10.tar.gz
+    tar -C /tmp -xzvf /tmp/libmemcached-1.0.4.tar.gz
+    tar -C /tmp -xzvf /tmp/memcached-2.0.1.tgz
+    
+    #make the directories
+    mkdir /app
+    mkdir /app/{apache,php,local}
+    mkdir /app/php/ext
+    mkdir /app/local/lib
+    
+    #copy libs
     cp /usr/lib/libmysqlclient* /app/local/lib/
     cp /usr/lib/libsasl2* /app/local/lib/
-    cp /usr/lib/libvbucket* /app/local/lib/
-    cp /usr/lib/libevent* /app/local/lib/
-    cp /usr/lib/libcouchbase* /app/local/lib/
-    # echo "/usr/lib" >> /etc/ld.so.conf.d/libc.conf
     
-    # extensions and libraries
-    curl -L https://launchpad.net/libmemcached/1.0/1.0.4/+download/libmemcached-1.0.4.tar.gz -o /tmp/libmemcached-1.0.4.tar.gz
-    cd /tmp
-    tar -xzvf libmemcached-1.0.4.tar.gz
-    cd libmemcached-1.0.4
+    
+    # apache
+    cd /tmp/httpd-2.2.22
+    ./configure --prefix=/app/apache --enable-rewrite --enable-so --enable-deflate --enable-expires --enable-headers
+    make && make install
+    
+    # php
+    cd /tmp/php-5.3.10
+    ./configure --prefix=/app/php --with-apxs2=/app/apache/bin/apxs --with-mysql --with-pdo-mysql --with-pgsql --with-pdo-pgsql --with-iconv --with-gd --with-curl=/usr/lib --with-config-file-path=/app/php --enable-soap=shared --with-openssl --enable-mbstring --with-mhash --enable-pcntl --enable-mysqlnd --with-pear --with-mysqli
+    make && make install
+    
+    # libmemcached
+    cd /tmp/libmemcached-1.0.4
     ./configure --prefix=/app/local
-    make
-    make install
-    cd /tmp
-    curl -L -O http://pecl.php.net/get/memcached-2.0.1.tgz
-    tar -xzvf memcached-2.0.1.tgz
-    cd memcached-2.0.1
-    # edit config.m4 line 21 so no => yes
+    make && make install
+    
+    # pecl memcached
+    cd /tmp/memcached-2.0.1
+    # edit config.m4 line 21 so no => yes ############### IMPORTANT!!! ###############
+    sed -i -e '21 s/no, no/yes, yes/' /tmp/memcached-2.0.1/config.m4
     /app/php/bin/phpize
     ./configure --with-libmemcached-dir=/app/local/ --prefix=/app/php --with-php-config=/app/php/bin/php-config
-    make
-    make install
-
-    cd /tmp
-    curl -L -O http://packages.couchbase.com/clients/php/php-ext-couchbase-1.0.1-ubuntu-x86_64.tar.gz
-    tar -xzvf php-ext-couchbase-1.0.1-ubuntu-x86_64.tar.gz
-    cd /tmp/php-ext-couchbase
-    cp couchbase.so /app/php/lib/php/extensions/no-debug-non-zts-20090626/
-
+    make && make install
     
     /app/php/bin/pear config-set php_dir /app/php
-    /app/php/bin/pecl install apc
     /app/php/bin/pecl install memcache
-
-
-    # php extensions
-    mkdir /app/php/ext
+    /app/php/bin/pecl install apc
     
+    # make it a little leaner
+    rm -rf /app/apache/manual/
+     
     # package
     cd /app
     echo '2.2.22' > apache/VERSION
