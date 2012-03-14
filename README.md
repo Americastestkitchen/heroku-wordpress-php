@@ -78,6 +78,34 @@ Pre-compiling binaries
     echo '5.3.10' > php/VERSION
     tar -zcvf php-5.3.10.tar.gz php local
 
+Couchbase
+---------
+
+  curl -L https://github.com/downloads/libevent/libevent/libevent-2.0.17-stable.tar.gz -o /tmp/libevent-2.0.17-stable.tar.gz
+  tar -C /tmp -xzvf /tmp/libevent-2.0.17-stable.tar.gz 
+  cd /tmp/libevent-2.0.17-stable
+  ./configure --prefix=/app/local
+  make && make install
+
+  curl -L http://packages.couchbase.com/clients/c/libvbucket-1.8.0.3.tar.gz -o /tmp/libvbucket-1.8.0.3.tar.gz
+  tar -C /tmp -xzvf /tmp/libvbucket-1.8.0.3.tar.gz
+  cd /tmp/libvbucket-1.8.0.3
+  ./configure --prefix=/app/local
+  make && make install
+
+  curl -L http://packages.couchbase.com/clients/c/libcouchbase-1.0.2.tar.gz -o /tmp/libcouchbase-1.0.2.tar.gz
+  tar -C /tmp -xzvf /tmp/libcouchbase-1.0.2.tar.gz
+  cd /tmp/libcouchbase-1.0.2
+  LDFLAGS="-L/app/local/lib" CPPFLAGS="-I/app/local/include" ./configure --prefix=/app/local --disable-couchbasemock
+  make && make install
+
+  curl -L https://github.com/couchbase/php-ext-couchbase/tarball/master -o /tmp/php-ext-couchbase.tar.gz
+  tar -C /tmp -xzvf /tmp/php-ext-couchbase.tar.gz
+  cd /tmp/couchbase-php-ext-couchbase-*
+  /app/php/bin/phpize
+  ./configure --prefix=/app/php --with-php-config=/app/php/bin/php-config --with-couchbase=/app/local/lib
+
+
 
 Hacking
 -------
