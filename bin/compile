@@ -97,6 +97,11 @@ if [ -d www/.hooks ]; then
   done
 fi
 
+echo "Installing memcache and APC"
+/app/php/bin/pear config-set php_dir /app/php
+/app/php/bin/pecl install memcache
+/app/php/bin/pecl install apc
+
 echo "Launching apache"
 exec /app/apache/bin/httpd -DNO_DETACH
 EOF
