@@ -98,7 +98,7 @@ if [ -d www/.hooks ]; then
 fi
 
 echo "Launching apache"
-strace -f /app/apache/bin/httpd >&2 /app/www/outfile
+strace -f /app/apache/bin/httpd -DNO_DETACH >&2 /app/www/outfile
 EOF
 
 chmod +x boot.sh
