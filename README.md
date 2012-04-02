@@ -18,7 +18,7 @@ Pre-compiling binaries
 Necessary only if you are looking to compile and host your own binaries. After you complete these steps, you will have to upload them to S3 and then point bin/compile to the new sources.
 
     # use AMI ami-04c9306d
-    apt-get -y update && apt-get -y install g++ gcc libssl-dev libpng-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
+    apt-get -y update && apt-get -y install g++ gcc libssl-dev libpng-dev libjpeg-dev libxml2-dev libmysqlclient-dev libpq-dev libpcre3-dev php5-dev php-pear curl libcurl3 libcurl3-dev php5-curl libsasl2-dev
     
     #download all the srcs
     curl -L http://www.apache.org/dist/httpd/httpd-2.2.22.tar.gz -o /tmp/httpd-2.2.22.tar.gz
