@@ -22,13 +22,22 @@ shopt -s dotglob
 cd $BUILD_DIR
 
 # move app things to www
+echo "-----> Moving all to www/"
 mkdir -p $CACHE_DIR/www
 mv * $CACHE_DIR/www
 mv $CACHE_DIR/www .
 
 # keep Procfile
+echo "-----> Moving Procfile back to /app"
 if [ -f www/Procfile ]; then
   mv www/Procfile .
+fi
+
+# keep .apt
+echo "-----> Moving .apt/ back to /app"
+if [ -d www/.apt/ ]; then
+  echo "-----> www/.apt exists: moving to ."
+  mv www/.apt/ .
 fi
 
 CACHE_VERSION=''
@@ -63,6 +72,11 @@ fi
 # update config files
 cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
 cp $LP_DIR/conf/php.ini php
+
+# soft link apache dependencies
+ln -sf /app/.apt/usr/lib/x86_64-linux-gnu/libjpeg.so.62.0.0 apache/lib/libjpeg.so.62
+ln -sf /app/.apt/lib/x86_64-linux-gnu/libssl.so.0.9.8 apache/lib/libssl.so.0.9.8
+ln -sf /app/.apt/lib/x86_64-linux-gnu/libcrypto.so.0.9.8 apache/lib/libcrypto.so.0.9.8
 
 # make php available on bin
 mkdir -p bin
